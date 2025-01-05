@@ -1,15 +1,18 @@
-
-import clsx from 'clsx'
-import './App.css'
+import clsx from "clsx";
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
 
 function App() {
-
   return (
-
-    <div className={clsx('App', 'bg-gray-100', 'text-gray-800 font-bold text-2xl')}>
-      <h1>Vite + React</h1>
+    <div>
+      {/* <h1>Vite + React</h1> */}
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        {/* <Route path="/about" element={<About />} /> */}
+      </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
