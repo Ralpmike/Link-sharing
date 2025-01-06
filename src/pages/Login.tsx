@@ -1,10 +1,29 @@
 import { useEffect, useState } from "react";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address").nonempty("Can't be empty"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .nonempty("Please check again"),
+});
+
+const registerSchema = loginSchema
+  .extend({
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true); 
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isFocused, setIsFocused] = useState({
     email: false,
     password: false,
@@ -12,7 +31,6 @@ const Login = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  
   const handleFocus = (field: string) => {
     setIsFocused((prevState) => ({ ...prevState, [field]: true }));
   };
@@ -21,17 +39,30 @@ const Login = () => {
     setIsFocused((prevState) => ({ ...prevState, [field]: false }));
   };
 
-  
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitted(true);
 
-    if (!email || !password || (!isLogin && !confirmPassword)) {
+    const formData = { email, password, confirmPassword };
+
+    const validationResult = isLogin
+      ? loginSchema.safeParse(formData)
+      : registerSchema.safeParse(formData);
+
+    if (!validationResult.success) {
+      const newErrors: { [key: string]: string } = {};
+      validationResult.error.errors.forEach((error) => {
+        if (error.path[0]) {
+          newErrors[error.path[0]] = error.message;
+        }
+      });
+      setErrors(newErrors);
       return;
     }
 
-    
-    console.log("Form submitted successfully");
+    // Clear errors if validation passes
+    setErrors({});
+    console.log("Form submitted successfully:", formData);
   };
 
   useEffect(() => {
@@ -39,6 +70,7 @@ const Login = () => {
     setPassword("");
     setConfirmPassword("");
     setIsSubmitted(false);
+    setErrors({});
   }, [isLogin]);
 
   return (
@@ -48,8 +80,8 @@ const Login = () => {
         <p className="text-gray-800 font-bold text-2xl md:text-3xl">devlinks</p>
       </div>
 
-      <div className="md:bg-white md:w-[476px] mx-auto md:h-[482px] md:p-8 md:rounded">
-        <h2 className="text-gray-800 font-bold text-2xl mb-2 md:mb-4">
+      <div className="md:bg-white md:w-[476px] mx-auto md:h-[510px] md:p-8 md:rounded">
+        <h2 className="text-gray-800 font-bold text-xl md:text-2xl mb-2 md:mb-4">
           {isLogin ? "Login" : "Create Account"}
         </h2>
         <p className="text-[#737373] text-lg md:text-base mb-8">
@@ -63,19 +95,17 @@ const Login = () => {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className={`text-sm mb-2 ${
-                isSubmitted && !email ? "text-red-600" : ""
-              }`}
+              className={`text-sm mb-2 ${errors.email ? "text-red-600" : ""}`}
             >
               Email address
             </label>
             <div
-              className={`${
-                isSubmitted && !email ? "border-red-400" : ""
-              } flex items-center gap-4 border px-4 py-2 rounded ${
+              className={`flex items-center gap-4 border px-4 py-2 rounded ${
                 isFocused.email
                   ? "border-[#633CFF] my-2 shadow-md shadow-[#633CFF] ring-1"
                   : ""
+              } ${
+                errors.email ? "border-red-400" : ""
               } transition-all duration-200 ease-in-out`}
             >
               <img src="envelope.png" className="w-4 h-4" alt="email" />
@@ -89,10 +119,8 @@ const Login = () => {
                 onFocus={() => handleFocus("email")}
                 onBlur={() => handleBlur("email")}
               />
-              {isSubmitted && !email && (
-                <span className="text-end text-sm translate-x-12 text-red-600">
-                  Can't be empty
-                </span>
+              {errors.email && (
+                <span className="text-sm text-red-600">{errors.email}</span>
               )}
             </div>
           </div>
@@ -102,18 +130,18 @@ const Login = () => {
             <label
               htmlFor="password"
               className={`text-sm mb-2 ${
-                isSubmitted && !password ? "text-red-600" : ""
+                errors.password ? "text-red-600" : ""
               }`}
             >
               Password
             </label>
             <div
-              className={`${
-                isSubmitted && !password ? "border-red-400" : ""
-              } flex items-center gap-4 border px-4 py-2 rounded ${
+              className={`flex items-center gap-4 border px-4 py-2 rounded ${
                 isFocused.password
                   ? "border-[#633CFF] shadow-md my-2 shadow-[#633CFF] ring-1"
                   : ""
+              } ${
+                errors.password ? "border-red-400" : ""
               } transition-all duration-200 ease-in-out`}
             >
               <img src="lock-key.png" className="w-4 h-4" alt="password" />
@@ -121,6 +149,7 @@ const Login = () => {
                 className="outline-none"
                 type="password"
                 id="password"
+                value={password}
                 placeholder={
                   isLogin ? "Enter your password" : "At least 8 characters"
                 }
@@ -128,10 +157,8 @@ const Login = () => {
                 onFocus={() => handleFocus("password")}
                 onBlur={() => handleBlur("password")}
               />
-              {isSubmitted && !password && (
-                <span className="text-end text-sm translate-x-8 text-red-600">
-                  Please check again
-                </span>
+              {errors.password && (
+                <span className="text-sm text-red-600">{errors.password}</span>
               )}
             </div>
           </div>
@@ -142,18 +169,18 @@ const Login = () => {
               <label
                 htmlFor="confirmPassword"
                 className={`text-sm ${
-                  isSubmitted && !confirmPassword ? "text-red-600" : ""
+                  errors.confirmPassword ? "text-red-600" : ""
                 }`}
               >
                 Confirm Password
               </label>
               <div
-                className={`${
-                  isSubmitted && !confirmPassword ? "border-red-400" : ""
-                } flex items-center gap-4 border px-4 py-2 rounded ${
+                className={`flex items-center gap-4 border px-4 py-2 rounded ${
                   isFocused.confirmPassword
                     ? "border-[#633CFF] shadow-md my-2 shadow-[#633CFF] ring-1"
                     : ""
+                } ${
+                  errors.confirmPassword ? "border-red-400" : ""
                 } transition-all duration-200 ease-in-out`}
               >
                 <img
@@ -162,26 +189,27 @@ const Login = () => {
                   alt="confirm-password"
                 />
                 <input
-                  className="outline-none"
+                  className="outline-none placeholder:text-sm"
                   type="password"
                   id="confirmPassword"
+                  value={confirmPassword}
                   placeholder="Confirm your password"
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onFocus={() => handleFocus("confirmPassword")}
                   onBlur={() => handleBlur("confirmPassword")}
                 />
-                {isSubmitted && !confirmPassword && (
-                  <span className="text-end text-sm translate-x-8 text-red-600">
-                    Please check again
-                  </span>
-                )}
               </div>
+              {errors.confirmPassword && (
+                <span className="text-sm text-red-600">
+                  {errors.confirmPassword}
+                </span>
+              )}
             </div>
           )}
 
           {/* Submit Button */}
           <button
-            className="bg-[#633CFF] mb-4 px-4 py-2 rounded text-white w-full"
+            className="bg-[#633CFF] mb-4 px-4 py-2 rounded text-white w-full font-semibold"
             type="submit"
           >
             {isLogin ? "Login" : "Create new Account"}
@@ -194,6 +222,7 @@ const Login = () => {
             </p>
 
             <button
+              type="button"
               onClick={() => setIsLogin(!isLogin)}
               className="text-[#633CFF] cursor-pointer"
             >
