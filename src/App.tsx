@@ -1,17 +1,20 @@
-import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
+import { toast } from "./components/ui/toast";
+import { Button } from "./components/ui/button";
 
 function App() {
+  function handleClick() {
+    toast({
+      title: "Error Occurred",
+      description: "This is a toast notification from Sonner.",
+      // variant: "success",
+    });
+  }
+
   return (
-    <div>
-      {/* <h1>Vite + React</h1> */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          {/* <Route path="/about" element={<About />} /> */}
-        </Routes>
-      </BrowserRouter>
+    <div className="flex items-center justify-center h-screen">
+      <Button variant={"outline"} onClick={handleClick}>
+        Click me
+      </Button>
     </div>
   );
 }
