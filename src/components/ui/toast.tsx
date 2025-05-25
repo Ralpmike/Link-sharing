@@ -4,9 +4,9 @@
 import { toast as sonnerToast } from "sonner";
 import { CustomToast } from "../custom/CustomToast";
 
-type Variant = "success" | "error" | "info" | "warning";
+export type Variant = "success" | "error" | "info" | "warning" | "default";
 
-interface ToastOptions {
+export interface ToastOptions {
   title: string;
   description?: string;
   button?: {
@@ -20,7 +20,7 @@ export function toast({
   title,
   description,
   button,
-  variant = "info",
+  variant = "default",
 }: ToastOptions) {
   return sonnerToast.custom((id) => (
     <CustomToast

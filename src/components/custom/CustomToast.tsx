@@ -25,7 +25,7 @@ export const CustomToast: React.FC<CustomToastProps> = ({
   const variantMap = {
     default: {
       icon: <Info className="text-gray-600 w-5 h-5" />,
-      bg: "bg-gray-50",
+      bg: "bg-gray-60",
       text: "text-gray-700",
     },
     success: {

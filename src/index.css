@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -117,4 +118,34 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    font-family: var(--font-instrument);
+  }
+}
+
+@theme {
+  --font-instrument: "Instrument Sans", sans-serif;
+
+  /* Colors */
+  --color-primary: #633cff;
+  --color-primary-light: #beadff;
+  --color-primary-lighter: #efebff;
+
+  --color-dark: #333333;
+  --color-gray-dark: #737373;
+  --color-gray-light: #d9d9d9;
+  --color-gray-lighter: #fafafa;
+  --color-error: #ff3939;
+
+  --shadow-input: 0 0 32px 0 #633cff40;
+
+  --color-border: #633cff;
+}
+
+.input-shadow {
+  box-shadow: 0 0 32px 0 #633cff40;
+}
+
+.size-HM {
+  @apply text-[2rem] leading-[150%] font-bold;
 }
