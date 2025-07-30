@@ -4,8 +4,9 @@ import type { FormUserSchemaType } from "@/pages/login";
 import axiosApi from "@/utils/axios";
 import axios from "axios";
 import { toast } from "@/components/ui/toast";
+import type { FormSchemaType } from "@/pages/signup";
 
-const registerUser = async (userData: FormUserSchemaType): Promise<void> => {
+const registerUser = async (userData: FormSchemaType): Promise<boolean> => {
   try {
     const response = await axiosApi.post("/auth/register", userData);
     if (response && response.status === 201) {
@@ -15,9 +16,10 @@ const registerUser = async (userData: FormUserSchemaType): Promise<void> => {
         variant: "success",
       });
       console.log("User registered successfully");
-    } else {
-      throw new Error("User registration failed");
+
+      return true;
     }
+    return false;
   } catch (error) {
     console.error("Error submitting form:", error);
     if (axios.isAxiosError(error) && error.response) {
@@ -34,6 +36,7 @@ const registerUser = async (userData: FormUserSchemaType): Promise<void> => {
         variant: "error",
       });
     }
+    return false;
   }
 };
 

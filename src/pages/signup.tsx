@@ -56,23 +56,26 @@ function SignUp() {
 
   async function onSubmit(data: FormSchemaType) {
     setIsLoading(true);
-    if (!data.email || !data.password) {
-      toast({
-        title: "Error",
-        description:
-          form.formState.errors.email?.message ||
-          form.formState.errors.password?.message,
-        variant: "error",
-      });
-      return;
+    try {
+      if (!data.email || !data.password) {
+        toast({
+          title: "Error",
+          description:
+            form.formState.errors.email?.message ||
+            form.formState.errors.password?.message,
+          variant: "error",
+        });
+        return;
+      }
+      const success = await registerUser(data);
+
+      if (success) {
+        navigate("/");
+        form.reset(); // Reset the form after successful submission
+      }
+    } finally {
+      setIsLoading(false); // Ensure spinner stops regardless of success or failure
     }
-    await registerUser(data);
-
-    navigate("/");
-
-    setIsLoading(false);
-
-    form.reset(); // Reset the form after successful submission
   }
 
   return (

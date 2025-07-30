@@ -12,7 +12,7 @@ import type { FormSchemaType } from "@/pages/signup";
 interface AuthContextType {
   token: string | null;
   // user: User | null;
-  registerUser: (userData: FormSchemaType) => Promise<void>;
+  registerUser: (userData: FormSchemaType) => Promise<boolean>;
   loginUser: (newUser: FormUserSchemaType) => Promise<boolean>;
   // isAuthenticated: boolean;
   loading: boolean;
