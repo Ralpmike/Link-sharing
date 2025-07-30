@@ -40,4 +40,16 @@ export const Icon = {
       />
     );
   },
+
+  UserIcon: ({ className }: { className?: string }) => {
+    return (
+      <img
+        src="/icons/user.svg"
+        className={className}
+        alt="User Icon"
+        width={24}
+        height={24}
+      />
+    );
+  },
 };

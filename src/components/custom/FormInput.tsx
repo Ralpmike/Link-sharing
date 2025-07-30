@@ -29,7 +29,7 @@ function FormInput({
         {Icon && <Icon className="size-4" />}
         <Input
           placeholder={placeholder}
-          autoComplete="off"
+          // autoComplete="off"
           className={clsx(
             className,
             "flex-1 border-0 bg-transparent focus:ring-0 focus-visible:ring-0 focus-visible:border-0 py-4"
