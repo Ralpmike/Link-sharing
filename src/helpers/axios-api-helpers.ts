@@ -1,18 +1,18 @@
 import { TokenService } from "@/utils/axios";
 
 
-export function setAdminToken(token: string): void {
+export function setUserToken(token: string): void {
   TokenService.setToken(token);
 }
 
-export function getAdminToken(): string | null {
+export function getUserToken(): string | null {
   return TokenService.getToken();
 }
 
-export function removeAdminToken(): void {
+export function removeUserToken(): void {
   TokenService.removeToken();
 }
 // export function logoutAdmin(): void {
-//   removeAdminToken();
+//   removeUserToken();
 //   window.location.href = "/signin";
 // }

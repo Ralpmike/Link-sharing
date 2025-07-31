@@ -5,6 +5,8 @@ import axiosApi from "@/utils/axios";
 import axios from "axios";
 import { toast } from "@/components/ui/toast";
 import type { FormSchemaType } from "@/pages/signup";
+import { setUserToken } from "@/helpers/axios-api-helpers";
+import { setUserLoginObject } from "./userInfo";
 
 const registerUser = async (userData: FormSchemaType): Promise<boolean> => {
   try {
@@ -78,13 +80,17 @@ const registerUser = async (userData: FormSchemaType): Promise<boolean> => {
 const loginUser = async (user: FormUserSchemaType): Promise<boolean> => {
   try {
     const response = await axiosApi.post("/auth/login", user);
+
     if (response && response.status === 200) {
+      const token = response.data.accessToken;
+      setUserToken(token);
+      setUserLoginObject(response.data.data.user);
       toast({
-        title: "Error",
+        title: "success",
         description: response.data.message,
         variant: "success",
       });
-      return true;
+      return response.data.data;
     }
     return false;
   } catch (error) {
