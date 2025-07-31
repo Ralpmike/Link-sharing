@@ -13,7 +13,7 @@ const registerUser = async (userData: FormSchemaType): Promise<boolean> => {
     const response = await axiosApi.post("/auth/register", userData);
     if (response && response.status === 201) {
       toast({
-        title: "Error",
+        title: "Success",
         description: response.data.message,
         variant: "success",
       });
